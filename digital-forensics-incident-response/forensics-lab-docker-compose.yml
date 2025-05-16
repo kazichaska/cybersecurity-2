@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  volatility:
+    image: volatilityfoundation/volatility
+    container_name: volatility
+    volumes:
+      - ./data:/data
+    working_dir: /data
+    entrypoint: ["/bin/bash"]
+
+  plaso:
+    image: log2timeline/plaso
+    container_name: plaso
+    volumes:
+      - ./data:/data
+    entrypoint: ["/bin/bash"]
+
+  wireshark:
+    image: linuxserver/wireshark
+    container_name: wireshark
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Chicago
+    volumes:
+      - ./wireshark:/config
+      - ./data:/data
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    shm_size: "2gb"
+    privileged: true
+    devices:
+      - "/dev/bus/usb:/dev/bus/usb"
+
+  exiftool:
+    image: ghcr.io/therootcompany/exiftool
+    container_name: exiftool
+    volumes:
+      - ./data:/data
+    working_dir: /data
+    entrypoint: ["/bin/bash"]
